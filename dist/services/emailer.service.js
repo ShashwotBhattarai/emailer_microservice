@@ -8,24 +8,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmailerService = void 0;
-const nodemailer = require("nodemailer");
+const nodemailer_1 = __importDefault(require("nodemailer"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 class EmailerService {
-    sendMail() {
+    sendMail(emailPayload) {
         return __awaiter(this, void 0, void 0, function* () {
-            const transporter = nodemailer.createTransport({
-                service: "gmail",
+            const transporter = nodemailer_1.default.createTransport({
+                service: process.env.SERVICE,
                 auth: {
-                    user: "shashwot.media@gmail.com",
-                    pass: "igfi bakt gsgh graj",
+                    user: process.env.EMAILER,
+                    pass: process.env.PASSWORD,
                 },
             });
             const mailOptions = {
-                from: "shashwot.media@gmail.com",
-                to: "babudallay@gmail.com,acstockthankot@gmail.com",
-                subject: "Welcome to NodeJS App",
-                text: "This is an email using nodemail in nodejs, chalyo re chalyo",
+                from: process.env.EMAILER,
+                to: emailPayload.to,
+                subject: emailPayload.subject,
+                text: emailPayload.text,
             };
             try {
                 const result = yield transporter.sendMail(mailOptions);

@@ -1,20 +1,24 @@
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+import { EmailPayload } from "../validators/emailPayload.validator";
+
+dotenv.config();
 
 export class EmailerService {
-  async sendMail() {
+  async sendMail(emailPayload: EmailPayload) {
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: process.env.SERVICE,
       auth: {
-        user: "shashwot.media@gmail.com",
-        pass: "igfi bakt gsgh graj",
+        user: process.env.EMAILER,
+        pass: process.env.PASSWORD,
       },
     });
 
     const mailOptions = {
-      from: "shashwot.media@gmail.com",
-      to: "babudallay@gmail.com,acstockthankot@gmail.com",
-      subject: "Welcome to NodeJS App",
-      text: "This is an email using nodemail in nodejs, chalyo re chalyo",
+      from: process.env.EMAILER,
+      to: emailPayload.to,
+      subject: emailPayload.subject,
+      text: emailPayload.text,
     };
 
     try {

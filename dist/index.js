@@ -16,12 +16,14 @@ const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
 const emailer_service_1 = require("./services/emailer.service");
+const emailPayload_validator_1 = __importDefault(require("./validators/emailPayload.validator"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 const port = 4000;
 app.use(body_parser_1.default.json());
-app.post("/emailer", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const sendmailResponse = yield new emailer_service_1.EmailerService().sendMail();
+app.post("/emailer", emailPayload_validator_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const emailPayload = req.body;
+    const sendmailResponse = yield new emailer_service_1.EmailerService().sendMail(req.body);
     res.send(sendmailResponse);
 }));
 app.listen(port, () => {

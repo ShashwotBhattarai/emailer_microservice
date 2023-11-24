@@ -2,23 +2,19 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { EmailerService } from "./services/emailer.service";
+import validateEmailPayloadMiddleware, {
+  EmailPayload,
+} from "./validators/emailPayload.validator";
 const app = express();
 app.use(cors());
 const port = 4000;
 
 app.use(bodyParser.json());
 
-app.post("/emailer", async (req, res) => {
+app.post("/emailer", validateEmailPayloadMiddleware, async (req, res) => {
+  const emailPayload: EmailPayload = req.body;
 
-
- const emailPayload= {
-    to: "babudallay@gmail.com,acstockthankot@gmail.com",
-    subject: "Welcome to NodeJS App",
-    text: "This is an email using nodemail in nodejs, chalyo re chalyo",
-  }
-
-  
-  const sendmailResponse = await new EmailerService().sendMail();
+  const sendmailResponse = await new EmailerService().sendMail(req.body);
 
   res.send(sendmailResponse);
 });
