@@ -28,7 +28,7 @@ function listenToSQS() {
                     text: message.Body,
                 };
                 const sendmailResponse = yield new emailer_service_1.EmailerService().sendMail(emailPayload);
-                console.log(sendmailResponse);
+                console.log(sendmailResponse.message);
             }
         }
         else {
@@ -36,4 +36,4 @@ function listenToSQS() {
         }
     });
 }
-node_cron_1.default.schedule('*/30 * * * * *', listenToSQS);
+node_cron_1.default.schedule("*/30 * * * * *", listenToSQS);

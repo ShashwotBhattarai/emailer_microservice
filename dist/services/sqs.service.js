@@ -36,7 +36,7 @@ class SQS_Service {
                     WaitTimeSeconds: 20,
                     VisibilityTimeout: 20,
                 }));
-                if (!Messages) {
+                if (!Messages || Messages.length === 0) {
                     return { status: 404, message: "No message in queue to fetch for now" };
                 }
                 if (Messages.length === 1) {
@@ -45,7 +45,7 @@ class SQS_Service {
                         ReceiptHandle: Messages[0].ReceiptHandle,
                     }));
                 }
-                else {
+                else if (Messages.length > 1) {
                     yield client.send(new client_sqs_1.DeleteMessageBatchCommand({
                         QueueUrl: sqsQueueUrl,
                         Entries: Messages.map((message) => ({
