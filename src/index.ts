@@ -1,24 +1,28 @@
-import express from "express";
-import bodyParser from "body-parser";
-import cors from "cors";
+import cron from "node-cron";
 import { EmailerService } from "./services/emailer.service";
-import validateEmailPayloadMiddleware, {
-  EmailPayload,
-} from "./validators/emailPayload.validator";
-const app = express();
-app.use(cors());
-const port = 4000;
+import { EmailPayload } from "./validators/emailPayload.validator";
+import { SQS_Service } from "./services/sqs.service";
 
-app.use(bodyParser.json());
+async function listenToSQS() {
+	let messages: any = [];
+	const response = await new SQS_Service().receiveMessageFromQueue();
 
-app.post("/emailer", validateEmailPayloadMiddleware, async (req, res) => {
-  const emailPayload: EmailPayload = req.body;
+	if (response.status == 200) {
+		messages = response.message;
 
-  const sendmailResponse = await new EmailerService().sendMail(req.body);
+		for (let message of messages) {
+			const emailPayload: EmailPayload = {
+				to: message.MessageAttributes.To.StringValue,
+				subject: message.MessageAttributes.Subject.StringValue,
+				text: message.Body,
+			};
+			const sendmailResponse = await new EmailerService().sendMail(emailPayload);
 
-  res.send(sendmailResponse);
-});
+			console.log(sendmailResponse.message);
+		}
+	} else {
+		console.log(response.message);
+	}
+}
 
-app.listen(port, () => {
-  console.log(`Emailer Microservice Running at port ${port}`);
-});
+cron.schedule("*/30 * * * * *", listenToSQS);
