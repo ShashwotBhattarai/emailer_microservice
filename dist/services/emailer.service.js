@@ -19,12 +19,29 @@ dotenv_1.default.config();
 class EmailerService {
     sendMail(emailPayload) {
         return __awaiter(this, void 0, void 0, function* () {
+            // const transporter = nodemailer.createTransport({
+            //   service: process.env.SERVICE,
+            //   auth: {
+            //     user: process.env.EMAILER,
+            //     pass: process.env.PASSWORD,
+            //   },
+            // });
             const transporter = nodemailer_1.default.createTransport({
-                service: process.env.SERVICE,
+                host: "mail@baseraboutiquehotel.com.np",
+                port: 465,
+                secure: false,
                 auth: {
-                    user: process.env.EMAILER,
-                    pass: process.env.PASSWORD,
+                    user: "sulav@baseraboutiquehotel.com.np",
+                    pass: "Nepal@1234",
                 },
+            });
+            transporter.verify(function (error, success) {
+                if (error) {
+                    console.log(error);
+                }
+                else {
+                    console.log("Server is ready to take our messages");
+                }
             });
             const mailOptions = {
                 from: process.env.EMAILER,
