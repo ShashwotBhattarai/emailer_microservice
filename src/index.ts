@@ -1,14 +1,14 @@
 import cron from "node-cron";
 import { EmailerService } from "./services/emailer.service";
-import { EmailPayload } from "./validators/emailPayload.validator";
+import { EmailPayload } from "./types/emailPayload.type";
 import { SQS_Service } from "./services/sqs.service";
 
-async function listenToSQS() {
+export async function listenToSQS() {
 	let messages: any = [];
 	const response = await new SQS_Service().receiveMessageFromQueue();
 
 	if (response.status == 200) {
-		messages = response.message;
+		messages = response.data;
 
 		for (let message of messages) {
 			const emailPayload: EmailPayload = {

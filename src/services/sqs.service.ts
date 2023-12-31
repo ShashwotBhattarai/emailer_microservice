@@ -1,17 +1,14 @@
 import { ReceiveMessageCommand, DeleteMessageCommand, SQSClient, DeleteMessageBatchCommand } from "@aws-sdk/client-sqs";
 import dotenv from "dotenv";
+import { createSQSClient } from "./createSQSClient.service";
 
 dotenv.config();
 export class SQS_Service {
 	async receiveMessageFromQueue() {
 		try {
-			const client = new SQSClient({
-				credentials: {
-					accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-					secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-				},
-				region: process.env.AWS_REGION || "",
-			});
+			const createSQSClientResponse = await createSQSClient();
+			const client = createSQSClientResponse.data as SQSClient;
+
 			const sqsQueueUrl = process.env.SQS_QUEUE_URL;
 
 			const { Messages } = await client.send(
@@ -26,17 +23,15 @@ export class SQS_Service {
 			);
 
 			if (!Messages || Messages.length === 0) {
-				return { status: 404, message: "No message in queue to fetch for now" };
-			}
-
-			if (Messages.length === 1) {
+				return { status: 404, message: "No message in queue to fetch for now", data: null };
+			} else if (Messages.length === 1) {
 				await client.send(
 					new DeleteMessageCommand({
 						QueueUrl: sqsQueueUrl,
 						ReceiptHandle: Messages[0].ReceiptHandle,
 					})
 				);
-			} else if (Messages.length > 1) {
+			} else {
 				await client.send(
 					new DeleteMessageBatchCommand({
 						QueueUrl: sqsQueueUrl,
@@ -48,9 +43,9 @@ export class SQS_Service {
 				);
 			}
 
-			return { status: 200, message: Messages };
+			return { status: 200, message: "messages present in sqs queue", data: Messages };
 		} catch (error) {
-			return { status: 500, message: error };
+			return { status: 500, message: "unknown error in sqs service", data: error };
 		}
 	}
 }
