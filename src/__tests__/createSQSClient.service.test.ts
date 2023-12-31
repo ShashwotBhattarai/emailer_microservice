@@ -1,4 +1,3 @@
-import e from "cors";
 import { createSQSClient } from "../services/createSQSClient.service";
 import { SQSClient } from "@aws-sdk/client-sqs";
 
