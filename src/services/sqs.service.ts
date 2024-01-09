@@ -1,13 +1,13 @@
-import { ReceiveMessageCommand, DeleteMessageCommand, SQSClient, DeleteMessageBatchCommand } from "@aws-sdk/client-sqs";
+import { ReceiveMessageCommand, DeleteMessageCommand, DeleteMessageBatchCommand } from "@aws-sdk/client-sqs";
 import dotenv from "dotenv";
 import { createSQSClient } from "./createSQSClient.service";
 
 dotenv.config();
-export class SQS_Service {
+export class SQSService {
 	async receiveMessageFromQueue() {
 		try {
 			const createSQSClientResponse = await createSQSClient();
-			const client = createSQSClientResponse.data as SQSClient;
+			const client = createSQSClientResponse.data;
 
 			const sqsQueueUrl = process.env.SQS_QUEUE_URL;
 

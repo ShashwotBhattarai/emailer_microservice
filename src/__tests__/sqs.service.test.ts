@@ -1,7 +1,6 @@
-import { SendMessageCommand, SQSClient, ReceiveMessageCommand, SQS } from "@aws-sdk/client-sqs";
+import { SQSClient, ReceiveMessageCommand } from "@aws-sdk/client-sqs";
 import { mockClient } from "aws-sdk-client-mock";
-import { SQS_Service } from "../services/sqs.service";
-import e from "cors";
+import { SQSService } from "../services/sqs.service";
 
 describe("Sqs service", () => {
 	beforeEach(() => {
@@ -15,7 +14,7 @@ describe("Sqs service", () => {
 			Messages: mockMessages,
 		});
 
-		const result = await new SQS_Service().receiveMessageFromQueue();
+		const result = await new SQSService().receiveMessageFromQueue();
 
 		expect(result.status).toBe(200);
 		expect(result.data).toBe(mockMessages);
@@ -28,7 +27,7 @@ describe("Sqs service", () => {
 			Messages: mockMessages,
 		});
 
-		const result = await new SQS_Service().receiveMessageFromQueue();
+		const result = await new SQSService().receiveMessageFromQueue();
 
 		expect(result.status).toBe(200);
 		expect(result.message).toBe("messages present in sqs queue");
@@ -37,12 +36,11 @@ describe("Sqs service", () => {
 
 	test("no messages in queue received", async () => {
 		const sqsClientMock = mockClient(SQSClient);
-		const mockMessages = [{ Body: "Message 1" }, { Body: "Message 2" }, { Body: "Message 3" }];
 		sqsClientMock.on(ReceiveMessageCommand).resolves({
 			Messages: [],
 		});
 
-		const result = await new SQS_Service().receiveMessageFromQueue();
+		const result = await new SQSService().receiveMessageFromQueue();
 
 		expect(result.status).toBe(404);
 		expect(result.message).toBe("No message in queue to fetch for now");
@@ -52,7 +50,7 @@ describe("Sqs service", () => {
 		const sqsClientMock = mockClient(SQSClient);
 		sqsClientMock.on(ReceiveMessageCommand).rejects(new Error("SQS Error"));
 
-		const result = await new SQS_Service().receiveMessageFromQueue();
+		const result = await new SQSService().receiveMessageFromQueue();
 
 		expect(result.status).toBe(500);
 	});

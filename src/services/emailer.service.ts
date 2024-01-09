@@ -22,7 +22,7 @@ export class EmailerService {
 		};
 
 		try {
-			const result = await transporter.sendMail(mailOptions);
+			await transporter.sendMail(mailOptions);
 			return {
 				status: 200,
 				message: "Email sent successfully",

@@ -1,16 +1,16 @@
 import cron from "node-cron";
 import { EmailerService } from "./services/emailer.service";
 import { EmailPayload } from "./types/emailPayload.type";
-import { SQS_Service } from "./services/sqs.service";
+import { SQSService } from "./services/sqs.service";
 
 export async function listenToSQS() {
 	let messages: any = [];
-	const response = await new SQS_Service().receiveMessageFromQueue();
+	const response = await new SQSService().receiveMessageFromQueue();
 
 	if (response.status == 200) {
 		messages = response.data;
 
-		for (let message of messages) {
+		for (const message of messages) {
 			const emailPayload: EmailPayload = {
 				to: message.MessageAttributes.To.StringValue,
 				subject: message.MessageAttributes.Subject.StringValue,
@@ -24,5 +24,4 @@ export async function listenToSQS() {
 		console.log(response.message);
 	}
 }
-
 cron.schedule("*/30 * * * * *", listenToSQS);
