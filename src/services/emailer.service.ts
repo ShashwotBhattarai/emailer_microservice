@@ -7,6 +7,7 @@ dotenv.config();
 export class EmailerService {
 	async sendMail(emailPayload: EmailPayload) {
 		const transporter = nodemailer.createTransport({
+			secure: true,
 			service: process.env.SERVICE,
 			auth: {
 				user: process.env.EMAILER,

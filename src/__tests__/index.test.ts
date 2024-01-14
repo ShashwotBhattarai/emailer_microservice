@@ -26,14 +26,14 @@ describe("listenToSQS", () => {
 		const emailerSpy = jest.spyOn(EmailerService.prototype, "sendMail");
 		emailerSpy.mockResolvedValue({ status: 200, message: "Email sent successfully" });
 
-		await listenToSQS();
+		listenToSQS();
 		expect(sqsSpy).toHaveBeenCalled();
 	});
 	it("should conosle.log no message in queue to send if no message present ", async () => {
 		const sqsSpy = jest.spyOn(SQSService.prototype, "receiveMessageFromQueue");
 		sqsSpy.mockResolvedValue({ status: 404, message: "No message in queue to fetch for now", data: null });
 
-		await listenToSQS();
+		listenToSQS();
 		expect(sqsSpy).toHaveBeenCalled();
 	});
 });
