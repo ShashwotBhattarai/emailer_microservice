@@ -12,21 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SQS_Service = void 0;
+exports.SQSService = void 0;
 const client_sqs_1 = require("@aws-sdk/client-sqs");
 const dotenv_1 = __importDefault(require("dotenv"));
+const createSQSClient_service_1 = require("./createSQSClient.service");
+const logger_config_1 = __importDefault(require("../configs/logger.config"));
 dotenv_1.default.config();
-class SQS_Service {
+class SQSService {
     receiveMessageFromQueue() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const client = new client_sqs_1.SQSClient({
-                    credentials: {
-                        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-                        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-                    },
-                    region: process.env.AWS_REGION || "",
-                });
+                const createSQSClientResponse = yield (0, createSQSClient_service_1.createSQSClient)();
+                const client = createSQSClientResponse.data;
                 const sqsQueueUrl = process.env.SQS_QUEUE_URL;
                 const { Messages } = yield client.send(new client_sqs_1.ReceiveMessageCommand({
                     AttributeNames: [],
@@ -37,15 +34,15 @@ class SQS_Service {
                     VisibilityTimeout: 20,
                 }));
                 if (!Messages || Messages.length === 0) {
-                    return { status: 404, message: "No message in queue to fetch for now" };
+                    return { status: 404, message: "No message in queue to fetch for now", data: null };
                 }
-                if (Messages.length === 1) {
+                else if (Messages.length === 1) {
                     yield client.send(new client_sqs_1.DeleteMessageCommand({
                         QueueUrl: sqsQueueUrl,
                         ReceiptHandle: Messages[0].ReceiptHandle,
                     }));
                 }
-                else if (Messages.length > 1) {
+                else {
                     yield client.send(new client_sqs_1.DeleteMessageBatchCommand({
                         QueueUrl: sqsQueueUrl,
                         Entries: Messages.map((message) => ({
@@ -54,12 +51,13 @@ class SQS_Service {
                         })),
                     }));
                 }
-                return { status: 200, message: Messages };
+                logger_config_1.default.info("Messages present in sqs queue");
+                return { status: 200, message: "messages present in sqs queue", data: Messages };
             }
             catch (error) {
-                return { status: 500, message: error };
+                return { status: 500, message: "unknown error in sqs service", data: error };
             }
         });
     }
 }
-exports.SQS_Service = SQS_Service;
+exports.SQSService = SQSService;

@@ -4,9 +4,11 @@
 	"description": "",
 	"main": "src/index.ts",
 	"scripts": {
+		"start": "tsc && node ./dist/index.js",
 		"test": "jest --coverage",
 		"lint": "eslint .",
-		"lint:fix": "eslint . --fix"
+		"lint:fix": "eslint . --fix",
+		"build": "tsc"
 	},
 	"author": "",
 	"license": "ISC",
@@ -22,7 +24,8 @@
 		"node-cron": "^3.0.3",
 		"nodemailer": "^6.9.6",
 		"ts-node": "^10.9.1",
-		"typescript": "^5.2.2"
+		"typescript": "^5.2.2",
+		"winston": "^3.11.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.23.7",

@@ -1,6 +1,7 @@
 import { ReceiveMessageCommand, DeleteMessageCommand, DeleteMessageBatchCommand } from "@aws-sdk/client-sqs";
 import dotenv from "dotenv";
 import { createSQSClient } from "./createSQSClient.service";
+import logger from "../configs/logger.config";
 
 dotenv.config();
 export class SQSService {
@@ -42,6 +43,7 @@ export class SQSService {
 					})
 				);
 			}
+			logger.info("Messages present in sqs queue");
 
 			return { status: 200, message: "messages present in sqs queue", data: Messages };
 		} catch (error) {

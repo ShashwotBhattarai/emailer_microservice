@@ -2,10 +2,11 @@ import cron from "node-cron";
 import { EmailerService } from "./services/emailer.service";
 import { EmailPayload } from "./types/emailPayload.type";
 import { SQSService } from "./services/sqs.service";
+import logger from "./configs/logger.config";
 
 export function listenToSQS() {
 	(async () => {
-		console.log("Listening to SQS");
+		logger.info("Listening to Emailer SQS Queue");
 		let messages: any = [];
 		const response = await new SQSService().receiveMessageFromQueue();
 
@@ -19,11 +20,10 @@ export function listenToSQS() {
 					text: message.Body,
 				};
 				const sendmailResponse = await new EmailerService().sendMail(emailPayload);
-
-				console.log(sendmailResponse.message);
+				logger.info(sendmailResponse.message);
 			}
 		} else {
-			console.log(response.message);
+			logger.info(response.message);
 		}
 	})();
 }

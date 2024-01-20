@@ -15,33 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmailerService = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const logger_config_1 = __importDefault(require("../configs/logger.config"));
 dotenv_1.default.config();
 class EmailerService {
     sendMail(emailPayload) {
         return __awaiter(this, void 0, void 0, function* () {
-            // const transporter = nodemailer.createTransport({
-            //   service: process.env.SERVICE,
-            //   auth: {
-            //     user: process.env.EMAILER,
-            //     pass: process.env.PASSWORD,
-            //   },
-            // });
             const transporter = nodemailer_1.default.createTransport({
-                host: "mail@baseraboutiquehotel.com.np",
-                port: 465,
-                secure: false,
+                secure: true,
+                service: process.env.SERVICE,
                 auth: {
-                    user: "sulav@baseraboutiquehotel.com.np",
-                    pass: "Nepal@1234",
+                    user: process.env.EMAILER,
+                    pass: process.env.PASSWORD,
                 },
-            });
-            transporter.verify(function (error, success) {
-                if (error) {
-                    console.log(error);
-                }
-                else {
-                    console.log("Server is ready to take our messages");
-                }
             });
             const mailOptions = {
                 from: process.env.EMAILER,
@@ -50,14 +35,15 @@ class EmailerService {
                 text: emailPayload.text,
             };
             try {
-                const result = yield transporter.sendMail(mailOptions);
+                yield transporter.sendMail(mailOptions);
+                logger_config_1.default.info("Email sent successfully");
                 return {
                     status: 200,
                     message: "Email sent successfully",
                 };
             }
             catch (error) {
-                console.log("Email send failed with error:", error);
+                logger_config_1.default.error("Unknown error in sending email", error);
                 return {
                     status: 500,
                     message: error,
