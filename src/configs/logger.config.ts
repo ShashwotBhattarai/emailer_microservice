@@ -14,7 +14,7 @@ const Format = format.combine(format.colorize(), format.timestamp(), format.alig
 
 const transportArray =
 	env === "production"
-		? [new transports.File({ filename: "authMicroserviceLogs.log", level: "info" })]
+		? [new transports.File({ filename: "emailerMicroserviceLogs.log", level: "info" })]
 		: [new transports.Console()];
 
 const logger = createLogger({
