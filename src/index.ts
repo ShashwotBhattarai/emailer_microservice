@@ -1,30 +1,31 @@
+import express, { Request, Response } from "express";
 import cron from "node-cron";
-import { EmailerService } from "./services/emailer.service";
-import { EmailPayload } from "./types/emailPayload.type";
-import { SQSService } from "./services/sqs.service";
 import logger from "./configs/logger.config";
+import cors from "cors";
+import bodyParser from "body-parser";
+import { listenToSQS } from "./services/listenToSQSQueue.service";
+import swaggerUi from "swagger-ui-express";
+import swaggerFile from "../swagger-output.json";
 
-export function listenToSQS() {
-	(async () => {
-		logger.info("Listening to Emailer SQS Queue");
-		let messages: any = [];
-		const response = await new SQSService().receiveMessageFromQueue();
+const app = express();
+app.disable("x-powered-by");
+const corsOptions = {
+	origin: "http://localhost:3000",
+};
+app.use(cors(corsOptions));
+const port = 3005;
 
-		if (response.status == 200) {
-			messages = response.data;
+app.use(bodyParser.json());
+app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
-			for (const message of messages) {
-				const emailPayload: EmailPayload = {
-					to: message.MessageAttributes.To.StringValue,
-					subject: message.MessageAttributes.Subject.StringValue,
-					text: message.Body,
-				};
-				const sendmailResponse = await new EmailerService().sendMail(emailPayload);
-				logger.info(sendmailResponse.message);
-			}
-		} else {
-			logger.info(response.message);
-		}
-	})();
-}
+app.get("/health", (req: Request, res: Response) => {
+	logger.info("Emailer microservice is alive");
+	res.status(200).json({ message: "Emailer microservice is alive" });
+});
+
+app.listen(port, () => {
+	logger.info(`Emailer Microservice Running at port ${port}`);
+	logger.info(`API documentation:http://localhost:3005/doc`);
+});
+
 cron.schedule("*/30 * * * * *", listenToSQS);
