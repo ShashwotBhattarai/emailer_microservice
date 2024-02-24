@@ -13,7 +13,7 @@ const corsOptions = {
 	origin: "http://localhost:3000",
 };
 app.use(cors(corsOptions));
-const port = 3005;
+const port = process.env.PORT;
 
 app.use(bodyParser.json());
 app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
@@ -25,7 +25,7 @@ app.get("/health", (req: Request, res: Response) => {
 
 app.listen(port, () => {
 	logger.info(`Emailer Microservice Running at port ${port}`);
-	logger.info(`API documentation:http://localhost:3005/doc`);
+	logger.info(`API documentation:http://localhost:${port}/doc`);
 });
 
 cron.schedule("*/30 * * * * *", listenToSQS);
