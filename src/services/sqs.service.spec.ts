@@ -1,6 +1,7 @@
 import { SQSClient, ReceiveMessageCommand } from "@aws-sdk/client-sqs";
 import { mockClient } from "aws-sdk-client-mock";
-import { SQSService } from "../services/sqs.service";
+import { SQSService } from "./sqs.service";
+import SQSClientService from "./createSQSClient.service";
 
 describe("Sqs service", () => {
   beforeEach(() => {
@@ -56,6 +57,26 @@ describe("Sqs service", () => {
 
     const result = await new SQSService().receiveMessageFromQueue();
 
+    expect(result.status).toBe(500);
+  });
+
+  test("sqs client is undefined", async () => {
+    jest.mock("./createSQSClient.service", () => {
+      return {
+        SQSClientService: jest.fn().mockImplementation(() => ({
+          createSQSClient: jest.fn(),
+        })),
+      };
+    });
+    jest
+      .spyOn(SQSClientService.prototype, "createSQSClient")
+      .mockResolvedValue({
+        status: 400,
+        message: "afbsf",
+        client: undefined,
+      });
+
+    const result = await new SQSService().receiveMessageFromQueue();
     expect(result.status).toBe(500);
   });
 });

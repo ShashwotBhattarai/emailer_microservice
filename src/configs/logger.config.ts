@@ -1,12 +1,10 @@
 import { createLogger, format, transports } from "winston";
-import * as dotenv from "dotenv";
-dotenv.config();
+import { envVars } from "./envVars.config";
 
-const env = process.env.ENV;
+const env = envVars.ENV;
 
-// { error: 0, warn: 1, info: 2, verbose: 3, debug: 4, silly: 5 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const formatParams = (info: any) => {
+const formatParams = (info: any): string => {
   const { timestamp, level, message, ...args } = info;
   const ts = timestamp.slice(0, 19).replace("T", " ");
 
@@ -35,5 +33,10 @@ const logger = createLogger({
   format: Format,
   transports: transportArray,
 });
+/*
+By setting the log level to info, 
+the logger will capture and log messages that are categorized as info, warn, and error, 
+but it will ignore messages that are less severe, such as debug, verbose, and silly.
+*/
 
 export default logger;

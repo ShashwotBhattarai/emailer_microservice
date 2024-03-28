@@ -1,23 +1,22 @@
 import nodemailer from "nodemailer";
-import dotenv from "dotenv";
-import { EmailPayload } from "../types/emailPayload.type";
+import { EmailPayload } from "../models/emailPayload.type";
 import logger from "../configs/logger.config";
-
-dotenv.config();
+import { envVars } from "../configs/envVars.config";
+import { ServiceResponse } from "../models/serviceResponse.type";
 
 export class EmailerService {
-  async sendMail(emailPayload: EmailPayload) {
+  async sendMail(emailPayload: EmailPayload): Promise<ServiceResponse> {
     const transporter = nodemailer.createTransport({
       secure: true,
-      service: process.env.SERVICE,
+      service: envVars.SERVICE,
       auth: {
-        user: process.env.EMAILER,
-        pass: process.env.PASSWORD,
+        user: envVars.EMAILER,
+        pass: envVars.PASSWORD,
       },
     });
 
     const mailOptions = {
-      from: process.env.EMAILER,
+      from: envVars.EMAILER,
       to: emailPayload.to,
       subject: emailPayload.subject,
       text: emailPayload.text,
@@ -34,7 +33,7 @@ export class EmailerService {
       logger.error("Unknown error in sending email", error);
       return {
         status: 500,
-        message: error,
+        message: "Unknown error in sending email",
       };
     }
   }

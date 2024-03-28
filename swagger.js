@@ -6,8 +6,8 @@ dotenv.config();
 
 const doc = {
   info: {
-    title: "Emailer microservice",
-    description: "Description",
+    title: "Emailer Microservice",
+    description: "Emailer Microservice",
   },
   host: `localhost:${process.env.PORT}`,
 };

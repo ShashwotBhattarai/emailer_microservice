@@ -1,6 +1,6 @@
-import { listenToSQS } from "../services/listenToSQSQueue.service";
-import { EmailerService } from "../services/emailer.service";
-import { SQSService } from "../services/sqs.service";
+import ListenerService from "./listenToSQSQueue.service";
+import { EmailerService } from "./emailer.service";
+import { SQSService } from "./sqs.service";
 
 describe("listenToSQS", () => {
   it("should send eamil if there is message present ", async () => {
@@ -33,7 +33,7 @@ describe("listenToSQS", () => {
       message: "Email sent successfully",
     });
 
-    listenToSQS();
+    new ListenerService().listenToSQS();
     expect(sqsSpy).toHaveBeenCalled();
   });
   it("should conosle.log no message in queue to send if no message present ", async () => {
@@ -44,7 +44,7 @@ describe("listenToSQS", () => {
       data: null,
     });
 
-    listenToSQS();
+    new ListenerService().listenToSQS();
     expect(sqsSpy).toHaveBeenCalled();
   });
 });

@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
-import { EmailerService } from "../services/emailer.service"; // Adjust the import path
-import { EmailPayload } from "../types/emailPayload.type"; // Adjust the import path
+import { EmailerService } from "./emailer.service";
+import { EmailPayload } from "../models/emailPayload.type";
 
 jest.mock("nodemailer", () => ({
   createTransport: jest.fn().mockReturnValue({
@@ -22,9 +22,7 @@ describe("EmailerService", () => {
       subject: "Test Subject",
       text: "Test Message",
     };
-    mockTransporter.sendMail.mockResolvedValue({
-      /* Mocked sendMail response */
-    });
+    mockTransporter.sendMail.mockResolvedValue({});
 
     const emailerService = new EmailerService();
     const response = await emailerService.sendMail(emailPayload);
@@ -43,7 +41,7 @@ describe("EmailerService", () => {
       subject: "Test Subject",
       text: "Test Message",
     };
-    const mockError = new Error("Failed to send email");
+    const mockError = "Unknown error in sending email";
     mockTransporter.sendMail.mockRejectedValue(mockError);
 
     const emailerService = new EmailerService();
