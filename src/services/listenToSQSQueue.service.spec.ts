@@ -3,7 +3,7 @@ import { EmailerService } from "./emailer.service";
 import { SQSService } from "./sqs.service";
 
 describe("listenToSQS", () => {
-  it("should send eamil if there is message present ", async () => {
+  it("should send email if there is message present ", async () => {
     const messages = [
       {
         MessageAttributes: {
@@ -23,7 +23,7 @@ describe("listenToSQS", () => {
     const sqsSpy = jest.spyOn(SQSService.prototype, "receiveMessageFromQueue");
     sqsSpy.mockResolvedValue({
       status: 200,
-      message: "messages found in queue",
+      message: "messages present in sqs queue",
       data: messages,
     });
 
@@ -46,5 +46,6 @@ describe("listenToSQS", () => {
 
     new ListenerService().listenToSQS();
     expect(sqsSpy).toHaveBeenCalled();
+    //TODO: expext the return ,mwtf
   });
 });

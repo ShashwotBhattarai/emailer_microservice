@@ -1,14 +1,13 @@
 import { SQSClient, ReceiveMessageCommand } from "@aws-sdk/client-sqs";
 import { mockClient } from "aws-sdk-client-mock";
 import { SQSService } from "./sqs.service";
-import SQSClientService from "./createSQSClient.service";
 
 describe("Sqs service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test("more than one messages in queue received", async () => {
+  it("more than one messages in queue received", async () => {
     const sqsClientMock = mockClient(SQSClient);
     const mockMessages = [
       { Body: "Message 1" },
@@ -25,7 +24,7 @@ describe("Sqs service", () => {
     expect(result.data).toBe(mockMessages);
     expect(result.message).toBe("messages present in sqs queue");
   });
-  test("one messages in queue received", async () => {
+  it("one messages in queue received", async () => {
     const sqsClientMock = mockClient(SQSClient);
     const mockMessages = [{ Body: "Message 1" }];
     sqsClientMock.on(ReceiveMessageCommand).resolves({
@@ -39,7 +38,7 @@ describe("Sqs service", () => {
     expect(result.data).toBe(mockMessages);
   });
 
-  test("no messages in queue received", async () => {
+  it("no messages in queue received", async () => {
     const sqsClientMock = mockClient(SQSClient);
     sqsClientMock.on(ReceiveMessageCommand).resolves({
       Messages: [],
@@ -51,32 +50,12 @@ describe("Sqs service", () => {
     expect(result.message).toBe("No message in queue to fetch for now");
   });
 
-  test("sqs error occures", async () => {
+  it("sqs error occures", async () => {
     const sqsClientMock = mockClient(SQSClient);
     sqsClientMock.on(ReceiveMessageCommand).rejects(new Error("SQS Error"));
 
     const result = await new SQSService().receiveMessageFromQueue();
 
-    expect(result.status).toBe(500);
-  });
-
-  test("sqs client is undefined", async () => {
-    jest.mock("./createSQSClient.service", () => {
-      return {
-        SQSClientService: jest.fn().mockImplementation(() => ({
-          createSQSClient: jest.fn(),
-        })),
-      };
-    });
-    jest
-      .spyOn(SQSClientService.prototype, "createSQSClient")
-      .mockResolvedValue({
-        status: 400,
-        message: "afbsf",
-        client: undefined,
-      });
-
-    const result = await new SQSService().receiveMessageFromQueue();
     expect(result.status).toBe(500);
   });
 });

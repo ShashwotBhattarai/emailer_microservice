@@ -20,6 +20,7 @@ export default class ListenerService {
             subject: message.MessageAttributes.Subject.StringValue,
             text: message.Body,
           };
+
           const sendmailResponse = await new EmailerService().sendMail(
             emailPayload,
           );

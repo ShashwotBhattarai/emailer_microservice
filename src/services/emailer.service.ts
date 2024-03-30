@@ -1,20 +1,11 @@
-import nodemailer from "nodemailer";
 import { EmailPayload } from "../models/emailPayload.type";
 import logger from "../configs/logger.config";
 import { envVars } from "../configs/envVars.config";
 import { ServiceResponse } from "../models/serviceResponse.type";
+import transporter from "../configs/nodemailerTransport.config";
 
 export class EmailerService {
   async sendMail(emailPayload: EmailPayload): Promise<ServiceResponse> {
-    const transporter = nodemailer.createTransport({
-      secure: true,
-      service: envVars.SERVICE,
-      auth: {
-        user: envVars.EMAILER,
-        pass: envVars.PASSWORD,
-      },
-    });
-
     const mailOptions = {
       from: envVars.EMAILER,
       to: emailPayload.to,
