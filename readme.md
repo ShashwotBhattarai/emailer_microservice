@@ -70,8 +70,8 @@ This microservice is designed to listen to SQS Queue and send emails. The detail
    ```bash
    Health check API:
 
-   curl --location 'http://localhost:3005/health' \
-    --data ''
+   curl --location 'http://localhost:3005/emailer/health' \
+   --data ''
    ```
 
 ### Test
