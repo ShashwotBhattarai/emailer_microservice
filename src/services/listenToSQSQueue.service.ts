@@ -24,6 +24,7 @@ export default class ListenerService {
           const sendmailResponse = await new EmailerService().sendMail(
             emailPayload,
           );
+
           logger.info(sendmailResponse.message);
         }
       } else {

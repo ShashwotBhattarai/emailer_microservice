@@ -1,6 +1,9 @@
 import ListenerService from "./listenToSQSQueue.service";
 import { EmailerService } from "./emailer.service";
 import { SQSService } from "./sqs.service";
+import logger from "../configs/logger.config";
+
+jest.mock("../configs/logger.config");
 
 describe("listenToSQS", () => {
   it("should send email if there is message present ", async () => {
@@ -33,8 +36,9 @@ describe("listenToSQS", () => {
       message: "Email sent successfully",
     });
 
-    new ListenerService().listenToSQS();
+    await new ListenerService().listenToSQS();
     expect(sqsSpy).toHaveBeenCalled();
+    expect(emailerSpy).toHaveBeenCalled();
   });
   it("should conosle.log no message in queue to send if no message present ", async () => {
     const sqsSpy = jest.spyOn(SQSService.prototype, "receiveMessageFromQueue");
@@ -44,8 +48,10 @@ describe("listenToSQS", () => {
       data: null,
     });
 
-    new ListenerService().listenToSQS();
+    await new ListenerService().listenToSQS();
     expect(sqsSpy).toHaveBeenCalled();
-    //TODO: expext the return ,mwtf
+    expect(logger.info).toHaveBeenCalledWith(
+      "No message in queue to fetch for now",
+    );
   });
 });
