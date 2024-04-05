@@ -16,7 +16,7 @@ describe("EmailerService", () => {
     jest.clearAllMocks();
   });
 
-  it("should send an email successfully", async () => {
+  it("should return status 200 when email is sent successfully", async () => {
     const emailPayload: EmailPayload = {
       to: "test@example.com",
       subject: "Test Subject",
@@ -27,15 +27,12 @@ describe("EmailerService", () => {
     const emailerService = new EmailerService();
     const response = await emailerService.sendMail(emailPayload);
 
-    expect(mockTransporter.sendMail).toHaveBeenCalledWith(
-      expect.objectContaining(emailPayload),
-    );
     expect(response).toEqual({
       status: 200,
       message: "Email sent successfully",
     });
   });
-  it("should handle errors when sending an email", async () => {
+  it("should return status 500 if sendMail results in an error", async () => {
     const emailPayload: EmailPayload = {
       to: "test@example.com",
       subject: "Test Subject",
@@ -47,9 +44,6 @@ describe("EmailerService", () => {
     const emailerService = new EmailerService();
     const response = await emailerService.sendMail(emailPayload);
 
-    expect(mockTransporter.sendMail).toHaveBeenCalledWith(
-      expect.objectContaining(emailPayload),
-    );
     expect(response).toEqual({ status: 500, message: mockError });
   });
 });

@@ -8,6 +8,7 @@ const doc = {
   info: {
     title: "Emailer Microservice",
     description: "Emailer Microservice",
+    version: "0.0.1",
   },
   host: `localhost:${process.env.PORT}`,
 };
