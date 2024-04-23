@@ -17,6 +17,8 @@ app.listen(port, () => {
   logger.info(`API documentation:http://localhost:${port}/doc`);
 });
 
-const listenToSQS = new ListenerService().listenToSQS;
+const listenerService = new ListenerService();
+
+const listenToSQS = listenerService.listenToSQS;
 
 cron.schedule("*/30 * * * * *", listenToSQS);

@@ -6,7 +6,6 @@ import logger from "../configs/logger.config";
 jest.mock("../configs/logger.config");
 
 describe("listenToSQS", () => {
-  const listnerService = new ListenerService();
   it("should send email if there is message present ", async () => {
     const messages = [
       {
@@ -29,7 +28,7 @@ describe("listenToSQS", () => {
       status: 200,
       message: "Email sent successfully",
     });
-
+    const listnerService = new ListenerService();
     await listnerService.listenToSQS();
     // // expect(logger.info).toHaveBeenCalledTimes(2);
     // expect(listnerService.emailResponse.status).toBe(200);
@@ -45,7 +44,7 @@ describe("listenToSQS", () => {
       message: "No message in queue to fetch for now",
       data: null,
     });
-
+    const listnerService = new ListenerService();
     await listnerService.listenToSQS();
     expect(sqsSpy).toHaveBeenCalled();
     expect(logger.error).toHaveBeenCalledWith(

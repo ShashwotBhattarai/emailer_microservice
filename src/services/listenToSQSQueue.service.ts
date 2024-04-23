@@ -1,24 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SQSService } from "./sqs.service";
 import { EmailPayload } from "../models/emailPayload.type";
 import logger from "../configs/logger.config";
 import { EmailerService } from "./emailer.service";
-import { ServiceResponse } from "../models/serviceResponse.type";
+// import { ServiceResponse } from "../models/serviceResponse.type";
 
 export default class ListenerService {
-  public emailResponse: ServiceResponse = {
-    status: 500,
-    message: "Unknown error in sending email",
-  };
+  public emailResponse: any;
 
-  public emailerService = new EmailerService();
+  public emailerService: any;
 
-  public sqsService = new SQSService();
+  public sqsService: any;
+
   public listenToSQS(): void {
     (async (): Promise<void> => {
       logger.info("Listening to Emailer SQS Queue");
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let messages: any = [];
+
+      this.emailerService = new EmailerService();
+      this.sqsService = new SQSService();
       const response = await this.sqsService.receiveMessageFromQueue();
 
       if (response.status === 200) {
@@ -34,7 +34,7 @@ export default class ListenerService {
           try {
             this.emailResponse =
               await this.emailerService.sendMail(emailPayload);
-            logger.info(this.emailResponse.message);
+            logger.info("emailResponse", this.emailResponse.message);
           } catch (error) {
             logger.error(error);
           }
