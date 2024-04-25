@@ -34,7 +34,7 @@ export default class ListenerService {
           try {
             this.emailResponse =
               await this.emailerService.sendMail(emailPayload);
-            logger.info("emailResponse", this.emailResponse.message);
+            // logger.info("emailResponse", this.emailResponse.message);
           } catch (error) {
             logger.error(error);
           }
