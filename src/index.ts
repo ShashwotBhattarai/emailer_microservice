@@ -19,6 +19,6 @@ app.listen(port, () => {
 
 const listenerService = new ListenerService();
 
-const listenToSQS = listenerService.listenToSQS;
+const listenToSQS = listenerService.listenToSQS.bind(listenerService);
 
 cron.schedule("*/30 * * * * *", listenToSQS);
