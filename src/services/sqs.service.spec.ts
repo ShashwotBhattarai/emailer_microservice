@@ -7,7 +7,7 @@ describe("Sqs service", () => {
     jest.clearAllMocks();
   });
 
-  it("should return status 200 and ^messages present in sqs queue^, if messages are present in queue", async () => {
+  it("should return status 200 and message:messages present in sqs queue, if messages are present in queue", async () => {
     const sqsClientMock = mockClient(SQSClient);
     const mockMessages = [
       { Body: "Message 1" },
