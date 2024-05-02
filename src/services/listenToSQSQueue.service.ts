@@ -1,15 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SQSService } from "./sqs.service";
 import { EmailPayload } from "../models/emailPayload.type";
 import logger from "../configs/logger.config";
 import { EmailerService } from "./emailer.service";
 
 export default class ListenerService {
+  public emailResponse: any;
+
+  private emailerService = new EmailerService();
+  private sqsService = new SQSService();
+
   public listenToSQS(): void {
     (async (): Promise<void> => {
       logger.info("Listening to Emailer SQS Queue");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let messages: any = [];
-      const response = await new SQSService().receiveMessageFromQueue();
+
+      const response = await this.sqsService.receiveMessageFromQueue();
 
       if (response.status === 200) {
         messages = response.data;
@@ -21,13 +27,15 @@ export default class ListenerService {
             text: message.Body,
           };
 
-          const sendmailResponse = await new EmailerService().sendMail(
-            emailPayload,
-          );
-          logger.info(sendmailResponse.message);
+          try {
+            this.emailResponse =
+              await this.emailerService.sendMail(emailPayload);
+          } catch (error) {
+            logger.error(error);
+          }
         }
       } else {
-        logger.info(response.message);
+        logger.error(response.message);
       }
     })();
   }
