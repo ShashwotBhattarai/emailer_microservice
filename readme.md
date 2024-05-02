@@ -79,3 +79,19 @@ This microservice is designed to listen to SQS Queue and send emails. The detail
 ```bash
    npm run test
 ```
+
+### Run SonarQube
+
+Please refer the following link to setup SonarQube in your machine.
+
+https://docs.sonarsource.com/sonarqube/latest/try-out-sonarqube/#installing-a-local-instance-of-sonarqube
+
+After a project has been setup you will get a command that looks like below, which one much execute in the root dir of that respective project to run the analysis.
+
+```bash
+   sonar-scanner \
+   -Dsonar.projectKey={{<PROJECTKEY>}} \
+   -Dsonar.sources=. \
+   -Dsonar.host.url={{<URL_WHERE_SONARQUBE_IS_HOSTED>}} \
+   -Dsonar.token={{<TOKEN FOR THE PROJECT>}}
+```
