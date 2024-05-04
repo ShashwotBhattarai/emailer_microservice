@@ -30,8 +30,8 @@ export default class ListenerService {
           try {
             this.emailResponse =
               await this.emailerService.sendMail(emailPayload);
-          } catch (error) {
-            logger.error(error);
+          } catch {
+            logger.error("error in sendMail");
           }
         }
       } else {
