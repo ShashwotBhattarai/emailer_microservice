@@ -35,20 +35,24 @@ describe("listenToSQS", () => {
       status: 200,
       message: "Email sent successfully",
     });
-    const listnerService = new ListenerService();
-    const listenToSQS = listnerService.listenToSQS.bind(listnerService);
 
-    try {
-      await listenToSQS();
-      expect(listnerService.emailResponse.status).toBe(200);
-      expect(listnerService.emailResponse.message).toBe(
-        "Email sent successfully",
-      );
-    } catch {
-      // eslint-disable-next-line no-console
-      console.log("inside catch block");
-    }
+    return new Promise<void>((resolve, reject) => {
+      const listenerService = new ListenerService();
+      listenerService.listenToSQS();
+      setTimeout(() => {
+        try {
+          expect(listenerService.emailResponse.status).toBe(200);
+          expect(listenerService.emailResponse.message).toBe(
+            "Email sent successfully",
+          );
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      }, 1000);
+    });
   });
+
   it("should log No message in queue to fetch for now, if no message is present ", async () => {
     const sqsSpy = jest.spyOn(SQSService.prototype, "receiveMessageFromQueue");
     sqsSpy.mockResolvedValue({
